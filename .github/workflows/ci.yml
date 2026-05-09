@@ -89,8 +89,7 @@ jobs:
                             repo: 'register-test',
                             pull_number: github.event.pull_request.number
                         });
-                        fileRaw = fs.readFileSync(prFilesList.raw_url)
-                        file = JSON.parse(fileRaw)
+                        file = JSON.parse(prFilesList.raw_url)
                         const subdomain = file.replace(/\.json$/, "");
                         const parentDomain = subdomain.split(".").reverse()[0];
                             if (parentDomain !== subdomain) {
