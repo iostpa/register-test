@@ -54,7 +54,7 @@ jobs:
               run: npx ava tests/*.test.js --timeout=1m
 
     username:
-        if: github.event.workflow_run.event == 'pull_request'
+        if: github.event_name == 'pull_request'
         name: Username check
         runs-on: ubuntu-latest
         steps:
