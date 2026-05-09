@@ -114,6 +114,7 @@ jobs:
                                 files.push(prFilesList[i].raw_url)
                             }
                         }
+                        let valid, invalid;
                         for (let file in files) {
                             const subdomain = file.replace(/\.json$/, "");
                             const parentDomain = subdomain.split(".").reverse()[0];
@@ -122,21 +123,26 @@ jobs:
                                 const parentData = getDomainData(parentDomain);
 
                                 if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
-                                    await github.rest.issues.createComment({
-                                        owner: context.repo.owner,
-                                        repo: context.repo.repo,
-                                        issue_number: context.payload.pull_request.number,
-                                        body: `The username is valid!`
-                                    });
+                                    valid = true;
                                 } else {
-                                    await github.rest.issues.createComment({
-                                        owner: context.repo.owner,
-                                        repo: context.repo.repo,
-                                        issue_number: context.payload.pull_request.number,
-                                        body: `aw man, the username is invalid`
-                                    });
+                                    invalid = true;
                                 }     
                             }
+                        }
+                        if (valid === true) {
+                            await github.rest.issues.createComment({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                issue_number: context.payload.pull_request.number,
+                                body: `The username is valid!`
+                            });
+                        } else if (invalid === true) {
+                            await github.rest.issues.createComment({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                issue_number: context.payload.pull_request.number,
+                                body: `aw man, the username is invalid`
+                            });
                         }
                     } catch(err) {
                         core.error("Error while reading or parsing the JSON")
