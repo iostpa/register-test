@@ -84,9 +84,9 @@ jobs:
                 script: |
                     try {
                         prFilesList = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
-                            owner: 'iostpa',
-                            repo: 'register-test',
-                            pull_number: github.event.pull_request.number
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            pull_number: context.payload.pull_request.number
                         });
                         file = prFilesList.data[0].raw_url;
                         const subdomain = file.replace(/\.json$/, "");
@@ -97,16 +97,16 @@ jobs:
 
                             if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
                                 await octokit.rest.issues.createComment({
-                                    owner: payload.repository.owner.login,
-                                    repo: payload.repository.name,
-                                    issue_number: payload.pull_request.number,
+                                    owner: context.repo.owner,
+                                    repo: context.repo.repo,
+                                    issue_number: context.payload.pull_request.number,
                                     body: `The username is valid!`
                                 });
                             } else {
                                 await octokit.rest.issues.createComment({
-                                    owner: payload.repository.owner.login,
-                                    repo: payload.repository.name,
-                                    issue_number: payload.pull_request.number,
+                                    owner: context.repo.owner,
+                                    repo: context.repo.repo,
+                                    issue_number: context.payload.pull_request.number,
                                     body: `aw man, the username is invalid`
                                 });
                             }     
