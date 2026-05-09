@@ -83,6 +83,20 @@ jobs:
               with:
                 script: |
                     try {
+                        const fs = require('fs')
+                        function getDomainData(subdomain) {
+                            if (domainCache[subdomain]) {
+                                return domainCache[subdomain];
+                            }
+
+                            try {
+                                const data = fs.readJsonSync(path.join(domainsPath, `${subdomain}.json`));
+                                domainCache[subdomain] = data; // Cache the domain data
+                                return data;
+                            } catch (error) {
+                                throw new Error(`Failed to read JSON for ${subdomain}: ${error.message}`);
+                            }
+                        }
                         prFilesList = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
                             owner: context.repo.owner,
                             repo: context.repo.repo,
