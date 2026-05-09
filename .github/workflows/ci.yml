@@ -80,6 +80,8 @@ jobs:
 
             - name: Run username check
               uses: actions/github-script@v9
+              env:
+                GH_TOKEN: ${{ github.token }}
               with:
                 script: |
                     try {
@@ -137,6 +139,7 @@ jobs:
                         core.error("Error while reading or parsing the JSON")
                         core.setFailed(err)
                     }
+                
 
 
 
