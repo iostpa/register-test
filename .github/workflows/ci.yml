@@ -103,19 +103,19 @@ jobs:
                                 throw new Error(`Failed to read JSON for ${subdomain}: ${error.message}`);
                             }
                         }
-                        prFilesList = await octokit.rest.pulls.listFiles({
+                        const prFilesList = await github.rest.pulls.listFiles({
                             owner: context.repo.owner,
                             repo: context.repo.repo,
                             pull_number: context.payload.pull_request.number
                         });
                         files = []
                         for (let i in prFilesList) {
-                            if (/\.json$/.test(prFilesList[i].raw_url)) {
-                                files.push(prFilesList[i].raw_url)
+                            if (/\.json$/.test(prFilesList[i].filename)) {
+                                files.push(prFilesList[i].filename)
                             }
                         }
                         let valid, invalid;
-                        for (let file in files) {
+                        for (let file of files) {
                             const subdomain = file.replace(/\.json$/, "");
                             const parentDomain = subdomain.split(".").reverse()[0];
                                 if (parentDomain !== subdomain) {
