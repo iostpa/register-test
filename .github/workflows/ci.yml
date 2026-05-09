@@ -122,10 +122,14 @@ jobs:
                                 const data = getDomainData(subdomain);
                                 const parentData = getDomainData(parentDomain);
 
-                                if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
-                                    valid = true;
+                                if (valid === true || invalid === true) {
+                                    return;                                
                                 } else {
-                                    invalid = true;
+                                    if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
+                                        valid = true;
+                                    } else {
+                                        invalid = true;
+                                    }
                                 }     
                             }
                         }
