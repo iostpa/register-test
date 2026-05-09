@@ -86,6 +86,9 @@ jobs:
                 script: |
                     try {
                         const fs = require('fs')
+                        const path = require("path");
+
+                        const domainsPath = path.resolve("domains");
                         const domainCache = {};
                         function getDomainData(subdomain) {
                             if (domainCache[subdomain]) {
@@ -93,7 +96,7 @@ jobs:
                             }
 
                             try {
-                                const data = fs.readJsonSync(path.join(domainsPath, `${subdomain}.json`));
+                                const data = fs.readFileSync(path.join(domainsPath, `${subdomain}.json`));
                                 domainCache[subdomain] = data; // Cache the domain data
                                 return data;
                             } catch (error) {
@@ -108,7 +111,7 @@ jobs:
                         files = []
                         for (let i in prFilesList) {
                             if (/\.json$/.test(prFilesList[i].raw_url)) {
-                                files.append(prFilesList[i].raw_url)
+                                files.push(prFilesList[i].raw_url)
                             }
                         }
                         for (let file in files) {
