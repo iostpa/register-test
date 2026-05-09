@@ -103,7 +103,7 @@ jobs:
                                 throw new Error(`Failed to read JSON for ${subdomain}: ${error.message}`);
                             }
                         }
-                        prFilesList = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
+                        prFilesList = await octokit.rest.pulls.listFiles({
                             owner: context.repo.owner,
                             repo: context.repo.repo,
                             pull_number: context.payload.pull_request.number
