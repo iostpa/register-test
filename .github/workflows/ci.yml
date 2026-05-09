@@ -88,7 +88,7 @@ jobs:
                         const fs = require('fs')
                         const path = require("path");
 
-                        const domainsPath = path.resolve("domains");
+                        const domainsPath = path.resolve("./domains");
                         const domainCache = {};
                         function getDomainData(subdomain) {
                             if (domainCache[subdomain]) {
