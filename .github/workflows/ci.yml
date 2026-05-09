@@ -82,32 +82,40 @@ jobs:
               uses: actions/github-script@v9
               with:
                 script: |
-                    file = await github.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
-                        owner: 'iostpa',
-                        repo: 'register-test',
-                        pull_number: github.event.pull_request.number
-                    });
-                    const subdomain = file.replace(/\.json$/, "");
-                    const parentDomain = subdomain.split(".").reverse()[0];
-                        if (parentDomain !== subdomain) {
-                        const data = getDomainData(subdomain);
-                        const parentData = getDomainData(parentDomain);
+                    try {
+                        const fs = require('fs')
+                        prFilesList = await github.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
+                            owner: 'iostpa',
+                            repo: 'register-test',
+                            pull_number: github.event.pull_request.number
+                        });
+                        fileRaw = fs.readFileSync(prFilesList.raw_url)
+                        file = JSON.parse(fileRaw)
+                        const subdomain = file.replace(/\.json$/, "");
+                        const parentDomain = subdomain.split(".").reverse()[0];
+                            if (parentDomain !== subdomain) {
+                            const data = getDomainData(subdomain);
+                            const parentData = getDomainData(parentDomain);
 
-                        if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
-                            await octokit.rest.issues.createComment({
-                                owner: payload.repository.owner.login,
-                                repo: payload.repository.name,
-                                issue_number: payload.pull_request.number,
-                                body: `The username is valid!`
-                            });
-                        } else {
-                            await octokit.rest.issues.createComment({
-                                owner: payload.repository.owner.login,
-                                repo: payload.repository.name,
-                                issue_number: payload.pull_request.number,
-                                body: `aw man, the username is invalid`
-                            });
-                        }     
+                            if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
+                                await octokit.rest.issues.createComment({
+                                    owner: payload.repository.owner.login,
+                                    repo: payload.repository.name,
+                                    issue_number: payload.pull_request.number,
+                                    body: `The username is valid!`
+                                });
+                            } else {
+                                await octokit.rest.issues.createComment({
+                                    owner: payload.repository.owner.login,
+                                    repo: payload.repository.name,
+                                    issue_number: payload.pull_request.number,
+                                    body: `aw man, the username is invalid`
+                                });
+                            }     
+                        }
+                    } catch(err) {
+                        core.error("Error while reading or parsing the JSON")
+                        core.setFailed(err)
                     }
 
 
