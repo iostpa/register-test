@@ -83,13 +83,12 @@ jobs:
               with:
                 script: |
                     try {
-                        const fs = require('fs')
                         prFilesList = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
                             owner: 'iostpa',
                             repo: 'register-test',
                             pull_number: github.event.pull_request.number
                         });
-                        file = JSON.parse(prFilesList.raw_url)
+                        file = prFilesList.data[0].raw_url;
                         const subdomain = file.replace(/\.json$/, "");
                         const parentDomain = subdomain.split(".").reverse()[0];
                             if (parentDomain !== subdomain) {
