@@ -110,8 +110,8 @@ jobs:
                         });
                         files = []
                         for (let i in prFilesList) {
-                            if (/\.json$/.test(prFilesList[i].filename)) {
-                                files.push(prFilesList[i].filename)
+                            if (/\.json$/.test(prFilesList[i].raw_url)) {
+                                files.push(prFilesList[i].raw_url)
                             }
                         }
                         let valid, invalid;
