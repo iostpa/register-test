@@ -103,28 +103,35 @@ jobs:
                             repo: context.repo.repo,
                             pull_number: context.payload.pull_request.number
                         });
-                        file = prFilesList.data[0].raw_url;
-                        const subdomain = file.replace(/\.json$/, "");
-                        const parentDomain = subdomain.split(".").reverse()[0];
-                            if (parentDomain !== subdomain) {
-                            const data = getDomainData(subdomain);
-                            const parentData = getDomainData(parentDomain);
+                        files = []
+                        for (let i in prFilesList) {
+                            if (/\.json$/.test(prFilesList[i].raw_url)) {
+                                files.append(prFilesList[i].raw_url)
+                            }
+                        }
+                        for (let file in files) {
+                            const subdomain = file.replace(/\.json$/, "");
+                            const parentDomain = subdomain.split(".").reverse()[0];
+                                if (parentDomain !== subdomain) {
+                                const data = getDomainData(subdomain);
+                                const parentData = getDomainData(parentDomain);
 
-                            if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
-                                await octokit.rest.issues.createComment({
-                                    owner: context.repo.owner,
-                                    repo: context.repo.repo,
-                                    issue_number: context.payload.pull_request.number,
-                                    body: `The username is valid!`
-                                });
-                            } else {
-                                await octokit.rest.issues.createComment({
-                                    owner: context.repo.owner,
-                                    repo: context.repo.repo,
-                                    issue_number: context.payload.pull_request.number,
-                                    body: `aw man, the username is invalid`
-                                });
-                            }     
+                                if (data.owner.username.toLowerCase() === parentData.owner.username.toLowerCase()) {
+                                    await octokit.rest.issues.createComment({
+                                        owner: context.repo.owner,
+                                        repo: context.repo.repo,
+                                        issue_number: context.payload.pull_request.number,
+                                        body: `The username is valid!`
+                                    });
+                                } else {
+                                    await octokit.rest.issues.createComment({
+                                        owner: context.repo.owner,
+                                        repo: context.repo.repo,
+                                        issue_number: context.payload.pull_request.number,
+                                        body: `aw man, the username is invalid`
+                                    });
+                                }     
+                            }
                         }
                     } catch(err) {
                         core.error("Error while reading or parsing the JSON")
